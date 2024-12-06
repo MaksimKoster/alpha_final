@@ -1,0 +1,3 @@
+[submodule "LightAutoML"]
+	path = LightAutoML
+	url = https://github.com/sb-ai-lab/LightAutoML.git
