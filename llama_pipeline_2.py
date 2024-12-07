@@ -8,8 +8,8 @@ from sklearn.metrics import (
     roc_auc_score, average_precision_score, f1_score, precision_score, recall_score
 )
 
-from lightautoml.automl.presets.tabular_presets import TabularUtilizedAutoML
-from lightautoml.tasks import Task
+from lightautoml2.automl.presets.tabular_presets import TabularUtilizedAutoML
+from lightautoml2.tasks import Task
 
 os.environ["CUDA_VISIBLE_DEVICES"] = "0"
 
@@ -17,10 +17,10 @@ os.environ["CUDA_VISIBLE_DEVICES"] = "0"
 SEED = 42
 np.random.seed(SEED)
 torch.manual_seed(SEED)
-N_THREADS = -1 #16
+N_THREADS = 16
 N_FOLDS = 10
 TIMEOUT = 1800  # 30 minutes as an example
-DATA_DIR = "/home/rbparchiev/alpha_hackathon/alpha_step_2/data/data_fs_rf/"
+DATA_DIR = "/home/rbparchiev/alpha_hackathon/alpha_final/data_fs_rf"
 OUTPUT_DIR = os.path.join(DATA_DIR, "lightautoml_pipeline_results_pandas")
 SUBMISSION_DIR = os.path.join(OUTPUT_DIR, "submissions")
 os.makedirs(SUBMISSION_DIR, exist_ok=True)
