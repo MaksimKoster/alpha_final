@@ -123,9 +123,9 @@ def feature_selection_wrapper(df, rf_cls_type=True):
     return short_list
 
 
-def df_prep(df):
+def df_prep(df, rf_cls_type=True):
     df = create_new_features(df)
 
-    short_list = feature_selection_wrapper(df)
+    short_list = feature_selection_wrapper(df, rf_cls_type=True)
 
     return df[short_list + ['id', 'smpl', 'target']]
