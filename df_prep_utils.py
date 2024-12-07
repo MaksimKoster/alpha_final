@@ -5,6 +5,8 @@ from sklearn.ensemble import RandomForestClassifier
 from lightgbm import LGBMClassifier
 from sklearn.feature_selection import VarianceThreshold
 
+from calc_psi import calculate_psi
+
 import time
 
 import joblib
@@ -107,8 +109,10 @@ def light_lgbm_feature_selection(train_df, features, target_col='target', n_jobs
 
 
 def feature_selection_wrapper(df, rf_cls_type=True):
+    psi_short_list = psi_feat_selection(df, df.drop(columns=['id', 'smpl', 'target']))
+    
     selector = VarianceThreshold(threshold=(.8 * (1 - .8)))
-    selector.fit_transform(df.drop(columns=['id', 'smpl', 'target']))
+    selector.fit_transform(df[psi_short_list])
 
     var_short_list = list(selector.feature_names_in_) 
     
@@ -121,6 +125,28 @@ def feature_selection_wrapper(df, rf_cls_type=True):
         
                   
     return short_list
+
+
+def calc_psi_all_time(df, feat):
+    
+    psi_list = []
+    for i in df['target_bin'].unique()[1:]:
+        psi_list.append(calculate_psi(df.loc[df.target_bin <= i-1, feat], df.loc[df.target_bin == i, feat], buckets=10, axis=1))
+
+    return (feat, np.mean(psi_list))
+
+
+def psi_feat_selection(df, features, n_jobs=joblib.cpu_count()-1):
+    temp_df = df.copy()
+    temp_df['target_bin'] = pd.qcut(temp_df['id'], q=5, labels=range(5))
+
+    delayed_funcs = [joblib.delayed(calc_psi_all_time)(temp_df, i) for i in features]
+    parallel_pool = joblib.Parallel(n_jobs=n_jobs)
+
+    res = parallel_pool(delayed_funcs)
+
+    return [feat_name for feat_name, psi in res if psi <= 0.2]
+
 
 
 def df_prep(df, rf_cls_type=True):
