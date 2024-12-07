@@ -87,6 +87,7 @@ def model():
         "dataset": [],
         "train_size": [],
         "oot_size": [],
+        'folds': [],
         "roc_auc_oot": [],
         "time": [],
         "train_time": [],
